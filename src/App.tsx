@@ -18,6 +18,7 @@ function App() {
   const [over, setOver] = useState(false);
   const [mode, setMode] = useState<GameMode>('human');
   const [isAIRunning, setIsAIRunning] = useState(false);
+  const [aiSpeed, setAiSpeed] = useState(300); // 100-400ms range
 
 
   // Initialize game
@@ -128,11 +129,11 @@ function App() {
       // Small delay to allow UI to render (animation)
       const timer = setTimeout(() => {
         workerRef.current?.postMessage({ grid });
-      }, 300); // 300ms visual delay for smoother animation viewing
+      }, aiSpeed); // Dynamic speed from slider
 
       return () => clearTimeout(timer);
     }
-  }, [mode, isAIRunning, grid, won, over]);
+  }, [mode, isAIRunning, grid, won, over, aiSpeed]);
   const handleModeChange = (newMode: GameMode) => {
     setMode(newMode);
     setIsAIRunning(false);
@@ -152,9 +153,11 @@ function App() {
         bestScore={bestScore}
         mode={mode}
         isAIRunning={isAIRunning}
+        aiSpeed={aiSpeed}
         onModeChange={handleModeChange}
         onNewGame={startNewGame}
         onToggleAI={handleToggleAI}
+        onAiSpeedChange={setAiSpeed}
       />
       <div className="game-wrapper">
         <Board tiles={tiles} />

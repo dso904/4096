@@ -7,9 +7,11 @@ interface HeaderProps {
     bestScore: number;
     mode: GameMode;
     isAIRunning: boolean;
+    aiSpeed: number;
     onModeChange: (mode: GameMode) => void;
     onNewGame: () => void;
     onToggleAI: () => void;
+    onAiSpeedChange: (speed: number) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -17,9 +19,11 @@ const Header: React.FC<HeaderProps> = ({
     bestScore,
     mode,
     isAIRunning,
+    aiSpeed,
     onModeChange,
     onNewGame,
     onToggleAI,
+    onAiSpeedChange,
 }) => {
     return (
         <div className="header">
@@ -66,6 +70,27 @@ const Header: React.FC<HeaderProps> = ({
                     </button>
                 </div>
             </div>
+
+            {mode === 'ai' && (
+                <div className="ai-speed-control">
+                    <label className="speed-label">
+                        Speed: <span className="speed-value">{aiSpeed}ms</span>
+                    </label>
+                    <input
+                        type="range"
+                        min="100"
+                        max="400"
+                        step="50"
+                        value={aiSpeed}
+                        onChange={(e) => onAiSpeedChange(Number(e.target.value))}
+                        className="speed-slider"
+                    />
+                    <div className="speed-labels">
+                        <span>Fast</span>
+                        <span>Slow</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
