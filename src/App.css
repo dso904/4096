@@ -1,0 +1,32 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.game-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.instructions {
+  margin-top: 20px;
+  text-align: center;
+  color: #8d6e63;
+  font-size: 0.9rem;
+}
+
+.instructions kbd {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 0 2px;
+  background: #d7ccc8;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5d4037;
+}
