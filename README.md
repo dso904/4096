@@ -21,6 +21,7 @@
 |---------|-------------|
 | 🎯 **Human Mode** | Classic gameplay with arrow keys or WASD |
 | 🤖 **AI Mode** | Watch an optimized AI solve the puzzle |
+| 🎚️ **Speed Control** | Adjustable AI speed slider (100-400ms) |
 | 🎨 **Cream & Green Theme** | Soothing, modern color palette |
 | ✨ **Smooth Animations** | Framer Motion powered tile transitions |
 | 💾 **Persistent High Score** | Local storage saves your best |
@@ -142,7 +143,7 @@ const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
 
 - **Tile Spawn**: Scale from 0 → 1 with spring physics
 - **Tile Merge**: Scale pop to 1.1 → 1
-- **AI Move Delay**: 300ms for visual clarity
+- **AI Speed Slider**: Adjustable 100ms (fast) to 400ms (slow)
 
 ---
 
