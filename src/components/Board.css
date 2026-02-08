@@ -3,10 +3,11 @@
   width: 100%;
   max-width: 400px;
   aspect-ratio: 1;
-  background: #d7ccc8;
+  background: var(--bg-board);
   border-radius: 16px;
   padding: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 }
 
 .board-grid {
@@ -18,8 +19,9 @@
 }
 
 .grid-cell {
-  background: #efebe9;
+  background: var(--bg-cell);
   border-radius: 12px;
+  transition: background-color 0.3s ease;
 }
 
 .tiles-container {

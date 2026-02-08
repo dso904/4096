@@ -28,16 +28,27 @@ const Header: React.FC<HeaderProps> = ({
     return (
         <div className="header">
             <div className="header-top">
-                <h1 className="game-title">4096</h1>
-                <div className="scores">
-                    <div className="score-box">
-                        <span className="score-label">SCORE</span>
-                        <span className="score-value">{score}</span>
-                    </div>
-                    <div className="score-box">
-                        <span className="score-label">BEST</span>
-                        <span className="score-value">{bestScore}</span>
-                    </div>
+                <div className="title-section">
+                    <div className="sparkle">✦</div>
+                    <h1 className="game-title">
+                        <span className="digit d4">4</span>
+                        <span className="digit d0">0</span>
+                        <span className="digit d9">9</span>
+                        <span className="digit d6">6</span>
+                    </h1>
+                    <div className="sparkle">✦</div>
+                </div>
+                <p className="tagline">Join the tiles, get to <strong>4096!</strong></p>
+            </div>
+
+            <div className="scores">
+                <div className="score-box">
+                    <span className="score-label">SCORE</span>
+                    <span className="score-value">{score.toLocaleString()}</span>
+                </div>
+                <div className="score-box">
+                    <span className="score-label">BEST</span>
+                    <span className="score-value">{bestScore.toLocaleString()}</span>
                 </div>
             </div>
 

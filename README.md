@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![4096 Game](https://img.shields.io/badge/Game-4096-4caf50?style=for-the-badge&logo=gamepad&logoColor=white)
+![4096 Game](https://img.shields.io/badge/Game-4096-f5b041?style=for-the-badge&logo=gamepad&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -22,9 +22,11 @@
 | 🎯 **Human Mode** | Classic gameplay with arrow keys or WASD |
 | 🤖 **AI Mode** | Watch an optimized AI solve the puzzle |
 | 🎚️ **Speed Control** | Adjustable AI speed slider (100-400ms) |
-| 🎨 **Cream & Green Theme** | Soothing, modern color palette |
+| � **Dark Theme** | Sleek, modern dark color palette |
+| 🎨 **Warm Tile Colors** | Classic beige → orange → red → gold gradient |
 | ✨ **Smooth Animations** | Framer Motion powered tile transitions |
-| 💾 **Persistent High Score** | Local storage saves your best |
+| � **Onboarding Modal** | Interactive tutorial on every page load |
+| �💾 **Persistent High Score** | Local storage saves your best |
 | ⚡ **Non-Blocking UI** | AI runs in Web Worker |
 
 ---
@@ -53,16 +55,17 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 📦 4096/
 ├── 📂 src/
 │   ├── 📂 ai/
-│   │   ├── 🧠 bitboard.ts      # O(1) lookup tables (65KB)
-│   │   └── ⚙️ aiWorker.ts      # Background AI thread
+│   │   ├── 🧠 bitboard.ts        # O(1) lookup tables
+│   │   └── ⚙️ aiWorker.ts        # Background AI thread
 │   ├── 📂 components/
-│   │   ├── 🎲 Board.tsx        # 4x4 game grid
-│   │   ├── 🟩 Tile.tsx         # Animated tiles
-│   │   ├── 📊 Header.tsx       # Score display
-│   │   └── 🏆 Overlay.tsx      # Win/lose screens
-│   ├── 🎮 gameEngine.ts        # Core game logic
-│   ├── 📝 types.ts             # TypeScript interfaces
-│   └── 🎨 index.css            # Global styles
+│   │   ├── 🎲 Board.tsx          # 4x4 game grid
+│   │   ├── 🟩 Tile.tsx           # Animated tiles
+│   │   ├── 📊 Header.tsx         # Title, scores, controls
+│   │   ├── 🏆 Overlay.tsx        # Win/lose screens
+│   │   └── 📖 OnboardingModal.tsx # Tutorial modal
+│   ├── 🎮 gameEngine.ts          # Core game logic
+│   ├── 📝 types.ts               # TypeScript interfaces
+│   └── 🎨 index.css              # Dark theme styles
 ├── 📄 package.json
 └── 📄 README.md
 ```
@@ -108,7 +111,7 @@ Row Encoding: [tile3][tile2][tile1][tile0] = 16 bits
 
 ### 🗃️ Transposition Table
 
-A **1 million entry** cache stores previously evaluated board states.
+A **1 million entry** cache stores previously evaluated board states for faster deep searches.
 
 ```typescript
 const TT_SIZE = 1048576; // 2^20
@@ -130,14 +133,31 @@ const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
 
 ## 🎨 Design Philosophy
 
-### Color Palette
+### Color Palette (Dark Theme)
 
 | Element | Color | Hex |
 |---------|-------|-----|
-| 🟫 Background | Cream | `#FAF3E0` |
-| 🟤 Board | Warm Beige | `#D7CCC8` |
-| 🟩 Tiles | Green Gradient | `#E8F5E9` → `#0D3D0D` |
-| 🟤 Text | Dark Brown | `#5D4037` |
+| 🌑 Background | Deep Navy | `#1A1A2E` |
+| 🎯 Board | Dark Slate | `#2D3047` |
+| ⭐ Accent | Gold | `#F5B041` |
+| � Text | Light Gray | `#EAEAEA` |
+
+### Tile Colors (HSL Gradient)
+
+| Tile | Color | HSL |
+|------|-------|-----|
+| 2 | Light Cream | `45, 30%, 85%` |
+| 4 | Warm Beige | `45, 40%, 78%` |
+| 8 | Orange | `30, 80%, 60%` |
+| 16 | Deep Orange | `25, 90%, 55%` |
+| 32 | Red-Orange | `15, 95%, 50%` |
+| 64 | Red | `5, 90%, 50%` |
+| 128 | Yellow | `50, 90%, 50%` |
+| 256 | Gold | `45, 95%, 50%` |
+| 512 | Amber | `40, 100%, 48%` |
+| 1024 | Deep Amber | `35, 100%, 45%` |
+| 2048 | Bronze | `30, 100%, 42%` |
+| 4096 | **Purple** 🎉 | `280, 80%, 55%` |
 
 ### Animation System
 
@@ -156,7 +176,7 @@ const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
 | **Vite** | Build tool |
 | **Framer Motion** | Animations |
 | **Web Workers** | Background AI |
-| **Typed Arrays** | High-performance AI |
+| **Lucide React** | Icons |
 
 ---
 
@@ -191,6 +211,6 @@ MIT © 2026
 
 <div align="center">
 
-**Made with 💚 and a lot of bitwise operations**
+**Made with 💛 and a lot of bitwise operations**
 
 </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Board, Header, Overlay } from './components';
+import { Board, Header, Overlay, OnboardingModal } from './components';
 import type { Direction, GameMode, Tile, Grid } from './types';
 import { initializeGame, move, addRandomTile, checkWin, canMove } from './gameEngine';
 import './App.css';
@@ -19,6 +19,11 @@ function App() {
   const [mode, setMode] = useState<GameMode>('human');
   const [isAIRunning, setIsAIRunning] = useState(false);
   const [aiSpeed, setAiSpeed] = useState(300); // 100-400ms range
+  const [showOnboarding, setShowOnboarding] = useState(true); // Show on every page load
+
+  const handleCloseOnboarding = () => {
+    setShowOnboarding(false);
+  };
 
 
   // Initialize game
@@ -169,6 +174,7 @@ function App() {
           <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> to move
         </p>
       )}
+      {showOnboarding && <OnboardingModal onClose={handleCloseOnboarding} />}
     </div>
   );
 }

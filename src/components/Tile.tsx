@@ -5,23 +5,23 @@ interface TileProps {
     tile: TileType;
 }
 
-// Color map based on tile value - shades of green
+// Color map based on tile value - warm gradient with purple victory tile
 const getTileStyle = (value: number): { background: string; color: string } => {
     const styles: Record<number, { background: string; color: string }> = {
-        2: { background: '#e8f5e9', color: '#2e7d32' },
-        4: { background: '#c8e6c9', color: '#2e7d32' },
-        8: { background: '#a5d6a7', color: '#1b5e20' },
-        16: { background: '#81c784', color: '#1b5e20' },
-        32: { background: '#66bb6a', color: '#ffffff' },
-        64: { background: '#4caf50', color: '#ffffff' },
-        128: { background: '#43a047', color: '#ffffff' },
-        256: { background: '#388e3c', color: '#ffffff' },
-        512: { background: '#2e7d32', color: '#ffffff' },
-        1024: { background: '#1b5e20', color: '#ffffff' },
-        2048: { background: '#145214', color: '#ffffff' },
-        4096: { background: '#0d3d0d', color: '#ffd700' },
+        2: { background: 'hsl(45, 30%, 85%)', color: '#776e65' },      // Light cream
+        4: { background: 'hsl(45, 40%, 78%)', color: '#776e65' },      // Warm beige
+        8: { background: 'hsl(30, 80%, 60%)', color: '#f9f6f2' },      // Orange
+        16: { background: 'hsl(25, 90%, 55%)', color: '#f9f6f2' },     // Deep orange
+        32: { background: 'hsl(15, 95%, 50%)', color: '#f9f6f2' },     // Red-orange
+        64: { background: 'hsl(5, 90%, 50%)', color: '#f9f6f2' },      // Red
+        128: { background: 'hsl(50, 90%, 50%)', color: '#f9f6f2' },    // Yellow
+        256: { background: 'hsl(45, 95%, 50%)', color: '#f9f6f2' },    // Gold
+        512: { background: 'hsl(40, 100%, 48%)', color: '#f9f6f2' },   // Amber
+        1024: { background: 'hsl(35, 100%, 45%)', color: '#f9f6f2' },  // Deep amber
+        2048: { background: 'hsl(30, 100%, 42%)', color: '#f9f6f2' },  // Bronze
+        4096: { background: 'hsl(280, 80%, 55%)', color: '#f9f6f2' },  // Purple (victory!)
     };
-    return styles[value] || { background: '#0d3d0d', color: '#ffd700' };
+    return styles[value] || { background: 'hsl(280, 80%, 55%)', color: '#f9f6f2' };
 };
 
 const Tile: React.FC<TileProps> = ({ tile }) => {
