@@ -1,4 +1,4 @@
-import { initTables, moveTable, scoreTable, heuristicTable, transpose, reverseRow } from './bitboard';
+import { initTables, moveTable, scoreTable, heuristicTableEarly, heuristicTableMid, heuristicTableLate, transpose, reverseRow } from './bitboard';
 
 // Initialize tables immediately
 initTables();
@@ -6,9 +6,9 @@ initTables();
 // The simplified Grid interface for the worker
 type CompactGrid = [number, number, number, number];
 
-// Transposition Table (1M entries = ~20MB)
-const TT_SIZE = 1048576; // 2^20
-const TT_MASK = 0xFFFFFn;
+// Transposition Table (4M entries = ~64MB)
+const TT_SIZE = 4194304; // 2^22
+const TT_MASK = 0x3FFFFFn;
 const ttKeys = new BigUint64Array(TT_SIZE);
 const ttValues = new Float64Array(TT_SIZE);
 const ttDepths = new Uint8Array(TT_SIZE);
@@ -231,20 +231,42 @@ class AI {
     }
 
     evaluate(grid: CompactGrid): number {
+        // Determine game stage based on max tile
+        let maxVal = 0;
+        for (let i = 0; i < 4; i++) {
+            // Check each nibble
+            let r = grid[i];
+            for (let j = 0; j < 4; j++) {
+                const val = (r >> (j * 4)) & 0xF;
+                if (val > maxVal) maxVal = val;
+            }
+        }
+
+        // Select heuristic table
+        // MaxVal is exponent: 9=512, 11=2048
+        let table;
+        if (maxVal < 9) { // < 512
+            table = heuristicTableEarly;
+        } else if (maxVal < 11) { // < 2048
+            table = heuristicTableMid;
+        } else { // >= 2048
+            table = heuristicTableLate;
+        }
+
         // Use pre-computed heuristic table + transpose check
         let score =
-            heuristicTable[grid[0]] +
-            heuristicTable[grid[1]] +
-            heuristicTable[grid[2]] +
-            heuristicTable[grid[3]];
+            table[grid[0]] +
+            table[grid[1]] +
+            table[grid[2]] +
+            table[grid[3]];
 
         // Also evaluate columns (by transposing)
         const t = transpose(grid[0], grid[1], grid[2], grid[3]);
         score +=
-            heuristicTable[t[0]] +
-            heuristicTable[t[1]] +
-            heuristicTable[t[2]] +
-            heuristicTable[t[3]];
+            table[t[0]] +
+            table[t[1]] +
+            table[t[2]] +
+            table[t[3]];
 
         return score;
     }

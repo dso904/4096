@@ -26,7 +26,10 @@ export const moveTable = new Uint16Array(65536);
 // scoreTable[row] gives the score gained by the move
 export const scoreTable = new Uint32Array(65536); // Score can exceed 65535
 // heuristicsTable[row] gives the heuristic score of the row
-export const heuristicTable = new Float64Array(65536);
+// Multi-Stage Heuristics
+export const heuristicTableEarly = new Float64Array(65536);
+export const heuristicTableMid = new Float64Array(65536);
+export const heuristicTableLate = new Float64Array(65536);
 
 // Initialize tables (run once on startup)
 export const initTables = () => {
@@ -76,52 +79,79 @@ export const initTables = () => {
         moveTable[row] = resultRow;
         scoreTable[row] = score;
 
-        // 3. Compute Heuristic
-        // Heuristic: Sum of powers (reward large tiles) + Empty cells + Monotonicity + Merges possible
-        let h = 0;
-        let empty = 0;
-        let merges = 0;
-        let monoLeft = 0;
-        let monoRight = 0;
+        // 3. Compute Heuristics for 3 Stages
 
-        for (let i = 0; i < 4; i++) {
-            const val = line[i];
-            if (val === 0) {
-                empty++;
-            } else {
-                h += Math.pow(val, 2.5); // Reward large tiles non-linearly
-            }
+        // Helper to calculate score with custom weights
+        const calcHeuristic = (wEmpty: number, wMerges: number, wMono: number, wEdge: number) => {
+            let h = 0;
+            let empty = 0;
+            let merges = 0;
+            let monoLeft = 0;
+            let monoRight = 0;
 
-            if (i < 3) {
-                // Check monotonicity
-                if (line[i] >= line[i + 1]) monoLeft += (line[i] * line[i]); // squared weight
-                if (line[i] <= line[i + 1]) monoRight += (line[i + 1] * line[i + 1]);
+            for (let i = 0; i < 4; i++) {
+                const val = line[i];
+                if (val === 0) {
+                    empty++;
+                } else {
+                    h += Math.pow(val, 2.5); // Base value reward
+                }
 
-                // Check merges (smoothness)
-                if (line[i] !== 0 && line[i] === line[i + 1]) {
-                    merges++;
+                if (i < 3) {
+                    // Check monotonicity
+                    if (line[i] >= line[i + 1]) monoLeft += (line[i] * line[i]); // squared weight
+                    if (line[i] <= line[i + 1]) monoRight += (line[i + 1] * line[i + 1]);
+
+                    // Check merges (smoothness)
+                    if (line[i] !== 0 && line[i] === line[i + 1]) {
+                        merges++;
+                    }
                 }
             }
-        }
 
-        h += empty * 1000; // Heavily reward empty space (Increased from 500)
-        h += merges * 600; // Reward potential merges (Increased from 400)
-        h += Math.max(monoLeft, monoRight) * 15.0; // Reward robust structure (Increased from 1.5)
+            h += empty * wEmpty;
+            h += merges * wMerges;
+            h += Math.max(monoLeft, monoRight) * wMono; // Monotonicity
 
-        // Corner/Edge Bonus: Reward having the largest tiles at the edges (index 0 or 3)
-        // We look at the row line. 
-        // If the max value of the row is at 0 or 3, we give a bonus.
-        // This encourages keeping big tiles at the walls.
-        let maxVal = 0;
-        let maxIdx = -1;
-        for (let i = 0; i < 4; i++) {
-            if (line[i] > maxVal) { maxVal = line[i]; maxIdx = i; }
-        }
-        if (maxVal > 0 && (maxIdx === 0 || maxIdx === 3)) {
-            h += Math.pow(maxVal, 3.0); // Stronger bonus for edge hogging
-        }
+            // Corner/Edge Bonus: Reward having the largest tiles at the edges
+            let maxVal = 0;
+            let maxIdx = -1;
+            for (let i = 0; i < 4; i++) {
+                if (line[i] > maxVal) { maxVal = line[i]; maxIdx = i; }
+            }
+            if (maxVal > 0 && (maxIdx === 0 || maxIdx === 3)) {
+                h += Math.pow(maxVal, 3.0) * wEdge;
+            }
 
-        heuristicTable[row] = h;
+            return h;
+        };
+
+        // Stage 1: Early Game (Max < 512)
+        // Focus: Build solid foundation - monotonicity is CRITICAL even early
+        heuristicTableEarly[row] = calcHeuristic(
+            1000, // Empty (baseline - proven to work)
+            500,  // Merges (moderate)
+            15.0, // Monotonicity (ORIGINAL VALUE - must not lower!)
+            1.0   // Edge bonus (normal)
+        );
+
+        // Stage 2: Mid Game (512 <= Max < 2048)
+        // Focus: Strengthen structure, prepare for endgame
+        heuristicTableMid[row] = calcHeuristic(
+            1000, // Empty (same baseline)
+            600,  // Merges (higher)
+            20.0, // Monotonicity (increasing pressure)
+            1.5   // Edge bonus (stronger)
+        );
+
+        // Stage 3: Late Game (Max >= 2048)
+        // Focus: Survival mode - strict order, maximize merges
+        heuristicTableLate[row] = calcHeuristic(
+            800,   // Empty (slightly lower - board naturally fuller)
+            800,   // Merges (critical for reaching 4096)
+            25.0,  // Monotonicity (very high - no chaos allowed)
+            2.0    // Edge bonus (must lock corner)
+        );
     }
     console.timeEnd('AI Table Initialization');
 };

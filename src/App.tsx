@@ -41,13 +41,13 @@ function App() {
     startNewGame();
   }, [startNewGame]);
 
-  // Update best score
+  // Update best score (only in human mode - AI scores don't count!)
   useEffect(() => {
-    if (score > bestScore) {
+    if (mode === 'human' && score > bestScore) {
       setBestScore(score);
       localStorage.setItem(STORAGE_KEY, score.toString());
     }
-  }, [score, bestScore]);
+  }, [score, bestScore, mode]);
 
   // Handle move
   const handleMove = useCallback(

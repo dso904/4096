@@ -13,10 +13,10 @@
 }
 
 .instructions {
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .instructions kbd {

@@ -20,13 +20,13 @@
 | Feature | Description |
 |---------|-------------|
 | 🎯 **Human Mode** | Classic gameplay with arrow keys or WASD |
-| 🤖 **AI Mode** | Watch an optimized AI solve the puzzle |
+| 🤖 **AI Mode** | Watch an optimized Expectimax AI solve the puzzle |
 | 🎚️ **Speed Control** | Adjustable AI speed slider (100-400ms) |
-| � **Dark Theme** | Sleek, modern dark color palette |
+| 🌙 **Dark Theme** | Sleek, modern dark color palette |
 | 🎨 **Warm Tile Colors** | Classic beige → orange → red → gold gradient |
 | ✨ **Smooth Animations** | Framer Motion powered tile transitions |
-| � **Onboarding Modal** | Interactive tutorial on every page load |
-| �💾 **Persistent High Score** | Local storage saves your best |
+| 📖 **Onboarding Modal** | Interactive tutorial on every page load |
+| 💾 **Persistent High Score** | Local storage saves your best (human mode only) |
 | ⚡ **Non-Blocking UI** | AI runs in Web Worker |
 
 ---
@@ -55,8 +55,8 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 📦 4096/
 ├── 📂 src/
 │   ├── 📂 ai/
-│   │   ├── 🧠 bitboard.ts        # O(1) lookup tables
-│   │   └── ⚙️ aiWorker.ts        # Background AI thread
+│   │   ├── 🧠 bitboard.ts        # O(1) lookup tables + multi-stage heuristics
+│   │   └── ⚙️ aiWorker.ts        # Background AI thread with 4M TT
 │   ├── 📂 components/
 │   │   ├── 🎲 Board.tsx          # 4x4 game grid
 │   │   ├── 🟩 Tile.tsx           # Animated tiles
@@ -90,7 +90,7 @@ Row Encoding: [tile3][tile2][tile1][tile0] = 16 bits
 |-------|------|---------|
 | `moveTable` | 128 KB | O(1) move results |
 | `scoreTable` | 256 KB | O(1) score lookup |
-| `heuristicTable` | 512 KB | O(1) evaluation |
+| `heuristicTables` | 1.5 MB | O(1) evaluation (3 stages) |
 
 ### 🔍 Search Algorithm
 
@@ -111,23 +111,26 @@ Row Encoding: [tile3][tile2][tile1][tile0] = 16 bits
 
 ### 🗃️ Transposition Table
 
-A **1 million entry** cache stores previously evaluated board states for faster deep searches.
+A **4 million entry** cache stores previously evaluated board states (~64MB RAM).
 
 ```typescript
-const TT_SIZE = 1048576; // 2^20
-const ttKeys = new BigUint64Array(TT_SIZE);   // 64-bit board keys
-const ttValues = new Float64Array(TT_SIZE);   // Cached scores
-const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
+const TT_SIZE = 4194304; // 2^22
+const TT_MASK = 0x3FFFFFn;
+const ttKeys = new BigUint64Array(TT_SIZE);
+const ttValues = new Float64Array(TT_SIZE);
+const ttDepths = new Uint8Array(TT_SIZE);
 ```
 
-### ⚖️ Heuristic Weights
+### ⚖️ Multi-Stage Heuristics
 
-| Factor | Weight | Purpose |
-|--------|--------|---------|
-| **Empty Cells** | 1000× | Keep the board open |
-| **Merge Potential** | 600× | Set up combos |
-| **Monotonicity** | 15× | Maintain "snake" chain |
-| **Corner Bias** | val³ | Keep max tile at edge |
+The AI adapts its strategy based on the game phase (max tile value).
+
+| Factor | Early (<512) | Mid (<2048) | Late (2048+) | Purpose |
+|--------|--------------|-------------|--------------|---------|
+| **Empty Cells** | 1000× | 1000× | 800× | Keep board open |
+| **Merges** | 500× | 600× | 800× | Enable combos |
+| **Monotonicity** | 15× | 20× | **25×** | Maintain snake pattern |
+| **Corner Bias** | 1.0× | 1.5× | 2.0× | Lock max tile at edge |
 
 ---
 
@@ -140,7 +143,7 @@ const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
 | 🌑 Background | Deep Navy | `#1A1A2E` |
 | 🎯 Board | Dark Slate | `#2D3047` |
 | ⭐ Accent | Gold | `#F5B041` |
-| � Text | Light Gray | `#EAEAEA` |
+| 📝 Text | Light Gray | `#EAEAEA` |
 
 ### Tile Colors (HSL Gradient)
 
@@ -187,6 +190,7 @@ const ttDepths = new Uint8Array(TT_SIZE);     // Search depths
 | **Move Generation** | O(1) |
 | **Search Depth** | 8-10+ moves |
 | **Time per Move** | ~150ms |
+| **TT Size** | 4M entries (~64MB) |
 | **Table Init** | ~50ms (one-time) |
 | **UI Blocking** | None (Web Worker) |
 

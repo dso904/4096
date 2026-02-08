@@ -1,22 +1,22 @@
 .header {
     width: 100%;
     max-width: 400px;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
     position: relative;
 }
 
 /* Title Section */
 .header-top {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 }
 
 .title-section {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 8px;
+    margin-bottom: 4px;
 }
 
 .sparkle {
@@ -46,7 +46,7 @@
 }
 
 .digit {
-    font-size: 3.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -86,19 +86,19 @@
 .scores {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 8px;
 }
 
 .score-box {
     background: var(--score-bg);
     border: 2px solid var(--score-border);
-    padding: 12px 24px;
-    border-radius: 12px;
+    padding: 8px 20px;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 100px;
+    min-width: 90px;
     transition: border-color 0.2s ease;
 }
 
@@ -116,7 +116,7 @@
 }
 
 .score-value {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--score-value);
 }
@@ -187,18 +187,18 @@
 
 /* AI Speed Control */
 .ai-speed-control {
-    margin-top: 16px;
-    padding: 12px 16px;
+    margin-top: 8px;
+    padding: 6px 12px;
     background: var(--bg-board);
     border-radius: 8px;
 }
 
 .speed-label {
     display: block;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-primary);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .speed-value {
